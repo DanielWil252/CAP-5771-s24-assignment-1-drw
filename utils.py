@@ -3,7 +3,6 @@ import numpy as np
 from typing import Type, Dict
 from numpy.typing import NDArray
 from sklearn import datasets
-import utils as u
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.base import BaseEstimator
 from sklearn.model_selection import (
@@ -97,11 +96,11 @@ def filter_out_7_9s(X: NDArray[np.floating], y: NDArray[np.int32]):
 
 
 def train_simple_classifier_with_cv(
+    *,
     Xtrain: NDArray[np.floating],
     ytrain: NDArray[np.int32],
     clf: BaseEstimator,
-    n_splits: int = 5,
-    cv_class: Type[KFold] = KFold,
+    cv: KFold = KFold,
 ):
     """
     Train a simple classifier using k-vold cross-validation.
@@ -117,7 +116,6 @@ def train_simple_classifier_with_cv(
     Returns:
         - A dictionary with mean and std of accuracy and fit time.
     """
-    cv = cv_class(n_splits=n_splits)
     scores = cross_validate(clf, Xtrain, ytrain, cv=cv)
     return scores
 
@@ -130,12 +128,13 @@ def print_cv_result_dict(cv_dict: Dict):
 def starter_code():
     try:
         Xtrain, ytrain, Xtest, ytest = prepare_data()
-        Xtrain, ytrain = u.filter_out_7_9s(Xtrain, ytrain)
-        Xtest, ytest = u.filter_out_7_9s(Xtest, ytest)
-        out_dict = u.train_simple_classifier_with_cv(
-            Xtrain, ytrain, DecisionTreeClassifier()
+        Xtrain, ytrain = filter_out_7_9s(Xtrain, ytrain)
+        Xtest, ytest = filter_out_7_9s(Xtest, ytest)
+        out_dict = train_simple_classifier_with_cv(
+            Xtrain=Xtrain, ytrain=ytrain, clf=DecisionTreeClassifier(),
+            cv=KFold(n_splits=3)
         )
-        u.print_cv_result_dict(out_dict)
+        print_cv_result_dict(out_dict)
         return 0
     except Exception:
         return -1  # Error
