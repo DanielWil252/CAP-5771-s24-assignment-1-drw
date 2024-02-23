@@ -89,19 +89,19 @@ class Section1:
         X, y, Xtest, ytest = u.prepare_data()
         Xtrain, ytrain = u.filter_out_7_9s(X, y)
         Xtest, ytest = u.filter_out_7_9s(Xtest, ytest)
-        Xtrain = nu.scale_data(Xtrain)
-        Xtest = nu.scale_data(Xtest)
-
+        Xtrain_test = nu.scale_data(Xtrain)
+        Xtest_test = nu.scale_data(Xtest)
         answer = {}
-
         # Enter your code and fill the `answer` dictionary
-
-        answer["length_Xtrain"] = None  # Number of samples
-        answer["length_Xtest"] = None
-        answer["length_ytrain"] = None
-        answer["length_ytest"] = None
-        answer["max_Xtrain"] = None
-        answer["max_Xtest"] = None
+        print(f"Xtest: {Xtest}\nXtest Length: {np.size(Xtest)}\nXtrain: {Xtrain}\nXtrain Length: {np.size(Xtrain)}\nYtest: {ytest}\nYtest length: {np.size(ytest)}\nYtrain:{ytrain}\nYtrain length: {np.size(ytrain)}")
+        print(f"Is Y only integers? {np.all(y[isinstance(y,int)])}\nIs X normalized? {nu.scale_data(X)}")
+        #np.set_printoptions(threshold=np.inf)
+        answer["length_Xtrain"] = np.size(Xtrain)  # Number of samples
+        answer["length_Xtest"] = np.size(Xtest)
+        answer["length_ytrain"] = np.size(ytrain)
+        answer["length_ytest"] = np.size(ytest)
+        answer["max_Xtrain"] = np.max(Xtrain)
+        answer["max_Xtest"] = np.max(Xtest)
         return answer, Xtrain, ytrain, Xtest, ytest
 
     """
@@ -118,14 +118,20 @@ class Section1:
         X: NDArray[np.floating],
         y: NDArray[np.int32],
     ):
+        # scores, clf, cv = self.partC(X, y)
         # Enter your code and fill the `answer` dictionary
-
+        cv = KFold(n_splits=5,shuffle=True,random_state=self.seed)
+        clf = DecisionTreeClassifier(random_state=self.seed)
+        clf.fit(X,y)
+        scores = cross_validate(clf,X,y,cv=cv)
+        accuracy = scores['test_score']
+        print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
         answer = {}
-        answer["clf"] = None  # the estimator (classifier instance)
-        answer["cv"] = None  # the cross validator instance
+        answer["clf"] = clf  # the estimator (classifier instance)
+        answer["cv"] = cv  # the cross validator instance
         # the dictionary with the scores  (a dictionary with
         # keys: 'mean_fit_time', 'std_fit_time', 'mean_accuracy', 'std_accuracy'.
-        answer["scores"] = None
+        answer["scores"] = scores
         return answer
 
     # ---------------------------------------------------------
@@ -140,14 +146,20 @@ class Section1:
         y: NDArray[np.int32],
     ):
         # Enter your code and fill the `answer` dictionary
-
+        cv = ShuffleSplit(n_splits=5,random_state=self.seed)
+        clf = DecisionTreeClassifier(random_state=self.seed)
+        clf.fit(X,y)
+        scores = cross_validate(clf,X,y,cv=cv)
+        accuracy = scores['test_score']
+        print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
+        answer = {}
         # Answer: same structure as partC, except for the key 'explain_kfold_vs_shuffle_split'
 
         answer = {}
-        answer["clf"] = None
-        answer["cv"] = None
-        answer["scores"] = None
-        answer["explain_kfold_vs_shuffle_split"] = None
+        answer["clf"] = clf
+        answer["cv"] = cv
+        answer["scores"] = scores
+        answer["explain_kfold_vs_shuffle_split"] = "Shuffle split can be more helpful in examining the variablilty of models compared to Kfold, but can be worse and less stable when trying to do a basic model evaluation."
         return answer
 
     # ----------------------------------------------------------------------
@@ -162,11 +174,19 @@ class Section1:
         X: NDArray[np.floating],
         y: NDArray[np.int32],
     ):
+        answer = {}
+        for k in [2,5,8,16]:
+            print(f"k = {k}")
+            cv = ShuffleSplit(n_splits=k,random_state=self.seed)
+            clf = DecisionTreeClassifier(random_state=self.seed)
+            clf.fit(X,y)
+            scores = cross_validate(clf,X,y,cv=cv)
+            accuracy = scores['test_score']
+            print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
+            answer[k] = {'scores':scores, 'cv':cv, 'clf':clf}
         # Answer: built on the structure of partC
         # `answer` is a dictionary with keys set to each split, in this case: 2, 5, 8, 16
         # Therefore, `answer[k]` is a dictionary with keys: 'scores', 'cv', 'clf`
-
-        answer = {}
 
         # Enter your code, construct the `answer` dictionary, and return it.
 
@@ -193,11 +213,27 @@ class Section1:
         y: NDArray[np.int32],
     ) -> dict[str, Any]:
         """ """
-
         answer = {}
 
         # Enter your code, construct the `answer` dictionary, and return it.
-
+        cv = ShuffleSplit(n_splits=5,random_state=self.seed)
+        clf_RF = RandomForestClassifier(random_state=self.seed)
+        clf_RF.fit(X,y)
+        clf_DT = DecisionTreeClassifier(random_state=self.seed)
+        clf_DT.fit(X,y)
+        scores_RF = cross_validate(clf_RF,X,y,cv=cv)
+        scores_DT = cross_validate(clf_DT,X,y,cv=cv)
+        accuracy_RF = scores_RF['test_score']
+        accuracy_DT = scores_DT['test_score']
+        #print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
+        answer["clf_RF"] = clf_RF
+        answer["clf_DT"] = clf_DT
+        answer["cv"] = cv
+        answer["scores_RF"] = {"mean_fit_time":scores_RF['fit_time'].mean(),"std_fit_time":scores_RF['fit_time'].std(),"mean_accuracy":accuracy_RF.mean(),"std_accuracy":accuracy_RF.std()}
+        answer["scores_DT"] = {"mean_fit_time":scores_DT['fit_time'].mean(),"std_fit_time":scores_DT['fit_time'].std(),"mean_accuracy":accuracy_DT.mean(),"std_accuracy":accuracy_DT.std()}
+        answer["model_highest_accuracy"] = "RF"
+        answer["model_lowest_variance"] = np.min([accuracy_RF.std()**2,accuracy_DT.std()**2])
+        answer["model_fastest"] = np.min([scores_RF['fit_time'],scores_DT['fit_time']])
         """
          Answer is a dictionary with the following keys: 
             "clf_RF",  # Random Forest class instance
@@ -269,6 +305,75 @@ class Section1:
 
         # Enter your code, construct the `answer` dictionary, and return it.
 
+        #asked chatgpt how to use parameter grids.
+        param_grid = {
+                        'criterion': ['gini', 'entropy'],
+                        'max_depth': [None, 10, 20, 30],
+                        'min_samples_split': [2, 4, 6],
+                        'min_samples_leaf': [1, 2, 4],
+                        'max_features': ['sqrt', 'log2']
+                    }
+        #get original mean accuracy.
+        clf = RandomForestClassifier(random_state=self.seed)
+        clf.fit(X,y)
+        cv = ShuffleSplit(n_splits=5,random_state=self.seed)
+        cm_original_train = confusion_matrix(y,clf.predict(X))
+        cm_original_test = confusion_matrix(ytest,clf.predict(Xtest))
+
+        TP = cm_original_test[1, 1]
+        TN = cm_original_test[0, 0]
+        FP = cm_original_test[0, 1]
+        FN = cm_original_test[1, 0]
+        accuracy_original_test = (TP + TN)/(TP+TN+FP+FN)
+
+        TP = cm_original_train[1, 1]
+        TN = cm_original_train[0, 0]
+        FP = cm_original_train[0, 1]
+        FN = cm_original_train[1, 0]
+        accuracy_original_train = (TP + TN)/(TP+TN+FP+FN)
+        #scores = cross_validate(clf,X,y,cv=cv)
+        #original_mean_accuracy_train = scores['test_score'].mean()
+        
+
+        grid_search = GridSearchCV(estimator=RandomForestClassifier(random_state=self.seed), param_grid=param_grid, cv=cv,scoring='accuracy',n_jobs=-1)
+        grid_search.fit(X,y)
+        best_parameters = grid_search.best_params_
+        best_clf = RandomForestClassifier(**best_parameters, random_state=self.seed)
+        best_clf.fit(X,y)
+        cm_best_train = confusion_matrix(y,best_clf.predict(X))
+        cm_best_test = confusion_matrix(ytest,best_clf.predict(Xtest))
+
+        TP = cm_best_test[1, 1]
+        TN = cm_best_test[0, 0]
+        FP = cm_best_test[0, 1]
+        FN = cm_best_test[1, 0]
+        accuracy_best_test = (TP + TN)/(TP+TN+FP+FN)
+
+        TP = cm_best_train[1, 1]
+        TN = cm_best_train[0, 0]
+        FP = cm_best_train[0, 1]
+        FN = cm_best_train[1, 0]
+        accuracy_best_train = (TP + TN)/(TP+TN+FP+FN)
+
+
+        #new_scores = cross-validate(best_clf,X,y,cv=cv)
+        #new_mean_accuracy = new_scores['test_score'].mean()
+
+        answer = {
+                    "clf": clf,
+                    "default_parameters": clf.get_params(),
+                    "best_estimator": best_clf,
+                    "grid_search": grid_search,
+                    "mean_accuracy_cv": grid_search.best_score_,
+                    "confusion_matrix_train_orig": cm_original_train,
+                    "confusion_matrix_train_best": cm_best_train,
+                    "confusion_matrix_test_orig": cm_original_test,
+                    "confusion_matrix_test_best": cm_best_test,
+                    "accuracy_orig_full_training": accuracy_original_train,
+                    "accuracy_best_full_training": accuracy_best_train,
+                    "accuracy_orig_full_testing": accuracy_original_test,
+                    "accuracy_best_full_testing": accuracy_best_test,
+                }
         """
            `answer`` is a dictionary with the following keys: 
             
@@ -296,5 +401,5 @@ class Section1:
             "accuracy_best_full_testing"
                
         """
-
+        print(answer)
         return answer
