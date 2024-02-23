@@ -45,9 +45,9 @@ class Section3:
         # Hint: Consider using collections.Counter or numpy.unique for counting
 
         uniq, counts = np.unique(y, return_counts=True)
-        print(f"{uniq=}")
-        print(f"{counts=}")
-        print(f"{np.sum(counts)=}")
+        #print(f"{uniq=}")
+        #print(f"{counts=}")
+        #print(f"{np.sum(counts)=}")
 
         return {
             "class_counts": {},  # Replace with actual class counts
