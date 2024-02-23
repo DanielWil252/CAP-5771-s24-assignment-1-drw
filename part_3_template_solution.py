@@ -102,7 +102,7 @@ class Section3:
         plt.title('Top-k Accuracy Score vs. k for Training and Testing Data')
         plt.legend()
         plt.grid(True)
-        plt.show()
+        #plt.show()
 
         answer = {}
         answer["clf"] = clf
@@ -284,7 +284,7 @@ class Section3:
         plt.xlabel('Predicted Class')
         plt.ylabel('Actual Class')
         plt.title('Confusion Matrix')
-        plt.show()
+        #plt.show()
 
         answer = {
             "scores": {
@@ -405,7 +405,7 @@ class Section3:
         plt.xlabel('Predicted Class')
         plt.ylabel('Actual Class')
         plt.title('Confusion Matrix')
-        plt.show()
+        #plt.show()
 
         answer = {
             "scores": {
