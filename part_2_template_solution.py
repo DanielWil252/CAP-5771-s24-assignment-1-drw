@@ -68,13 +68,13 @@ class Section2:
         Xtrain, ytrain, Xtest, ytest = u.prepare_data()
         #Xtrain_test = nu.scale_data(Xtrain)
         #Xtest_test = nu.scale_data(Xtest)
-        print(f"Xtest: {Xtest}\nXtest Length: {np.size(Xtest)}\nXtrain: {Xtrain}\nXtrain Length: {np.size(Xtrain)}\nYtest: {ytest}\nYtest length: {np.size(ytest)}\nYtrain:{ytrain}\nYtrain length: {np.size(ytrain)}")
+        #print(f"Xtest: {Xtest}\nXtest Length: {np.size(Xtest)}\nXtrain: {Xtrain}\nXtrain Length: {np.size(Xtrain)}\nYtest: {ytest}\nYtest length: {np.size(ytest)}\nYtrain:{ytrain}\nYtrain length: {np.size(ytrain)}")
         answer['nb_classes_train'] = np.size(set(ytrain))
         answer['nb_classes_test'] = np.size(set(ytest))
         _,class_count_train = np.unique(ytrain,return_counts=True)
         _,class_count_test = np.unique(ytest,return_counts=True)
-        print(class_count_test)
-        print(class_count_train)
+        #print(class_count_test)
+        #print(class_count_train)
         answer['class_count_train'] = class_count_train
         answer['class_count_test'] = class_count_test
         answer['length_Xtrain'] = np.size(Xtrain)
@@ -208,5 +208,5 @@ class Section2:
             - "class_count_test": number of elements in each class in
                                the training set (a list, not a numpy array)
         """
-        print(answer)
+        #print(answer)
         return answer

@@ -189,8 +189,8 @@ class Section3:
 
         # Scale the data
         
-        print(f"is x scaled? {nu.scale_data(X)}")
-        print(f"Is y all integers? {np.all(y[isinstance(y,int)])}")
+        #print(f"is x scaled? {nu.scale_data(X)}")
+        #print(f"Is y all integers? {np.all(y[isinstance(y,int)])}")
     # Fill in the answer dictionary
         answer = {
             "length_Xtrain": np.size(Xtrain),
@@ -201,7 +201,7 @@ class Section3:
             "max_Xtest": np.max(Xtest)
         }
 
-        print(answer)
+        #print(answer)
         # Answer is a dictionary with the same keys as part 1.B
 
         return answer, X, y, Xtest, ytest
@@ -325,7 +325,7 @@ class Section3:
         - "std_precision" : the std precision
         - "std_f1" : the std f1
         """
-        print(answer)
+        #print(answer)
         return answer
 
     # --------------------------------------------------------------------------
@@ -349,7 +349,7 @@ class Section3:
         classes = np.unique(y)
         class_weights = compute_class_weight(class_weight='balanced', classes=classes, y=y)
         class_weights_dict = dict(zip(classes, class_weights))
-        print(class_weights_dict)
+        #print(class_weights_dict)
         scaler = StandardScaler()
         cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=self.seed)
 

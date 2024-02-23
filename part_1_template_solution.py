@@ -93,8 +93,8 @@ class Section1:
         Xtest_test = nu.scale_data(Xtest)
         answer = {}
         # Enter your code and fill the `answer` dictionary
-        print(f"Xtest: {Xtest}\nXtest Length: {np.size(Xtest)}\nXtrain: {Xtrain}\nXtrain Length: {np.size(Xtrain)}\nYtest: {ytest}\nYtest length: {np.size(ytest)}\nYtrain:{ytrain}\nYtrain length: {np.size(ytrain)}")
-        print(f"Is Y only integers? {np.all(y[isinstance(y,int)])}\nIs X normalized? {nu.scale_data(X)}")
+        #print(f"Xtest: {Xtest}\nXtest Length: {np.size(Xtest)}\nXtrain: {Xtrain}\nXtrain Length: {np.size(Xtrain)}\nYtest: {ytest}\nYtest length: {np.size(ytest)}\nYtrain:{ytrain}\nYtrain length: {np.size(ytrain)}")
+        #print(f"Is Y only integers? {np.all(y[isinstance(y,int)])}\nIs X normalized? {nu.scale_data(X)}")
         #np.set_printoptions(threshold=np.inf)
         answer["length_Xtrain"] = np.size(Xtrain)  # Number of samples
         answer["length_Xtest"] = np.size(Xtest)
@@ -125,7 +125,7 @@ class Section1:
         clf.fit(X,y)
         scores = cross_validate(clf,X,y,cv=cv)
         accuracy = scores['test_score']
-        print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
+        #print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
         answer = {}
         answer["clf"] = clf  # the estimator (classifier instance)
         answer["cv"] = cv  # the cross validator instance
@@ -151,7 +151,7 @@ class Section1:
         clf.fit(X,y)
         scores = cross_validate(clf,X,y,cv=cv)
         accuracy = scores['test_score']
-        print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
+        #print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
         answer = {}
         # Answer: same structure as partC, except for the key 'explain_kfold_vs_shuffle_split'
 
@@ -176,13 +176,13 @@ class Section1:
     ):
         answer = {}
         for k in [2,5,8,16]:
-            print(f"k = {k}")
+            #print(f"k = {k}")
             cv = ShuffleSplit(n_splits=k,random_state=self.seed)
             clf = DecisionTreeClassifier(random_state=self.seed)
             clf.fit(X,y)
             scores = cross_validate(clf,X,y,cv=cv)
             accuracy = scores['test_score']
-            print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
+            #print(f"mean accuracy: {accuracy.mean()}\nstd accuracy: {accuracy.std()}")
             answer[k] = {'scores':scores, 'cv':cv, 'clf':clf}
         # Answer: built on the structure of partC
         # `answer` is a dictionary with keys set to each split, in this case: 2, 5, 8, 16
@@ -401,5 +401,5 @@ class Section1:
             "accuracy_best_full_testing"
                
         """
-        print(answer)
+        #print(answer)
         return answer
